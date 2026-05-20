@@ -112,9 +112,9 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         }
 
         using var timeoutCts = new CancellationTokenSource(timeout);
-        timeoutCts.Token.Register(() => _connCompletionSource.SetResult(new TimeoutException()));
+        timeoutCts.Token.Register(() => _connCompletionSource.TrySetResult(new TimeoutException()));
 
-        cancellationToken.Register(() => _connCompletionSource.SetResult(new TaskCanceledException()));
+        cancellationToken.Register(() => _connCompletionSource.TrySetResult(new TaskCanceledException()));
 
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
         var ctsToken = cts.Token;
@@ -153,7 +153,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
                 _eventRunner.RunInBackground(OnReconnectError, this, ex);
                 if (i == attempts - 1)
                 {
-                    _connCompletionSource!.SetResult(ex);
+                    _connCompletionSource!.TrySetResult(ex);
                     throw ex;
                 }
 
@@ -176,7 +176,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         _logger.LogDebug("Session connecting...");
         await session.ConnectAsync(cancellationToken).ConfigureAwait(false);
         _session = session;
-        _sessionCompletionSource!.SetResult(true);
+        _sessionCompletionSource!.TrySetResult(true);
         _logger.LogDebug("Session connected");
     }
 
@@ -190,7 +190,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         }
         catch (Exception ex)
         {
-            _connCompletionSource!.SetResult(ex);
+            _connCompletionSource!.TrySetResult(ex);
             throw;
         }
 
@@ -390,7 +390,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
     {
         _logger.LogDebug("Transport upgrading...");
         using var timeoutCts = new CancellationTokenSource(Options.ConnectionTimeout);
-        timeoutCts.Token.Register(() => _connCompletionSource!.SetResult(new TimeoutException()));
+        timeoutCts.Token.Register(() => _connCompletionSource!.TrySetResult(new TimeoutException()));
         var cancellationToken = timeoutCts.Token;
         var session = NewSessionWithCancellationToken(cancellationToken);
         session.Options.Sid = message.Sid;
@@ -469,7 +469,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         Id = connectedMessage.Sid;
         Connected = true;
         _eventRunner.RunInBackground(OnConnected, this, EventArgs.Empty);
-        _connCompletionSource!.SetResult(null);
+        _connCompletionSource!.TrySetResult(null);
         _session!.OnDisconnected = () => InvokeOnDisconnected(DisconnectReason.TransportError);
     }
 
@@ -511,7 +511,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
     private void HandleErrorMessage(IMessage message)
     {
         var err = (ErrorMessage)message;
-        _connCompletionSource!.SetResult(new ConnectionException(err.Error));
+        _connCompletionSource!.TrySetResult(new ConnectionException(err.Error));
         OnError?.Invoke(this, err.Error);
     }
 
