@@ -418,6 +418,25 @@ public class SocketIOTests
 
         await _errorStrategy.Received(1).OnErrorAsync(Arg.Any<AggregateException>());
     }
+
+    [Fact]
+    public async Task ConnectAsync_CancelTokenAfterConnected_NotThrow()
+    {
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(80).ConfigureAwait(false);
+            await OnNextAsync(_io, new ConnectedMessage
+            {
+                Sid = "123",
+            });
+        });
+
+        using var cts = new CancellationTokenSource();
+        await _io.ConnectAsync(cts.Token);
+        await cts.Invoking(async x => await x.CancelAsync())
+            .Should()
+            .NotThrowAsync();
+    }
     #endregion
 
     #region Private Methods

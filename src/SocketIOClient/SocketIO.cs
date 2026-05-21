@@ -153,7 +153,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
                 _eventRunner.RunInBackground(OnReconnectError, this, ex);
                 if (i == attempts - 1)
                 {
-                    _connCompletionSource!.TrySetResult(ex);
+                    _connCompletionSource!.SetResult(ex);
                     throw ex;
                 }
 
@@ -190,7 +190,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         }
         catch (Exception ex)
         {
-            _connCompletionSource!.TrySetResult(ex);
+            _connCompletionSource!.SetResult(ex);
             throw;
         }
 
@@ -469,7 +469,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         Id = connectedMessage.Sid;
         Connected = true;
         _eventRunner.RunInBackground(OnConnected, this, EventArgs.Empty);
-        _connCompletionSource!.TrySetResult(null);
+        _connCompletionSource!.SetResult(null);
         _session!.OnDisconnected = () => InvokeOnDisconnected(DisconnectReason.TransportError);
     }
 
@@ -511,7 +511,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
     private void HandleErrorMessage(IMessage message)
     {
         var err = (ErrorMessage)message;
-        _connCompletionSource!.TrySetResult(new ConnectionException(err.Error));
+        _connCompletionSource!.SetResult(new ConnectionException(err.Error));
         OnError?.Invoke(this, err.Error);
     }
 
