@@ -309,11 +309,12 @@ npm run start # 启动 socket.io server 测试服务
 
 # Change log
 
-## [4.0.3] - 2026-03-28
+## [4.0.4] - 2026-05-22
 
 ### Bugfix
 
-- 优化服务端为 Python 实现时的边缘场景处理
+- 修复 `TaskCompletionSource.SetResult()` 相关问题
+- 修复 `TaskScheduler.UnobservedTaskException` 相关问题
 
 [See more](./CHANGELOG.md)
 

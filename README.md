@@ -310,11 +310,12 @@ npm run start # Start socket.io server for integration testing
 
 # Change log
 
-## [4.0.3] - 2026-03-28
+## [4.0.4] - 2026-05-22
 
 ### Bugfix
 
-- Improve handling of edge cases when the server is implemented in Python
+- Fix the issues with `TaskCompletionSource.SetResult()`
+- Fix the issues with `TaskScheduler.UnobservedTaskException`
 
 [See more](./CHANGELOG.md)
 
