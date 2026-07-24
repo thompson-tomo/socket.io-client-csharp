@@ -309,12 +309,13 @@ npm run start # 启动 socket.io server 测试服务
 
 # Change log
 
-## [4.0.4] - 2026-05-22
+## [4.0.5] - 2026-07-24
 
 ### Bugfix
 
-- 修复 `TaskCompletionSource.SetResult()` 相关问题
-- 修复 `TaskScheduler.UnobservedTaskException` 相关问题
+- Fix a race condition for packet IDs
+- Fix the reconnection attempts limit
+- Fix TaskCompletionSource.SetResult getting stuck
 
 [See more](./CHANGELOG.md)
 

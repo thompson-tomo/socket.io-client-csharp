@@ -310,12 +310,13 @@ npm run start # Start socket.io server for integration testing
 
 # Change log
 
-## [4.0.4] - 2026-05-22
+## [4.0.5] - 2026-07-24
 
 ### Bugfix
 
-- Fix the issues with `TaskCompletionSource.SetResult()`
-- Fix the issues with `TaskScheduler.UnobservedTaskException`
+- Fix a race condition for packet IDs
+- Fix the reconnection attempts limit
+- Fix TaskCompletionSource.SetResult getting stuck
 
 [See more](./CHANGELOG.md)
 
