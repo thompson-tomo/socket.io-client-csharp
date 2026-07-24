@@ -108,7 +108,11 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         var timeout = (int)(Options.ConnectionTimeout.TotalMilliseconds * 1.02);
         if (Options.Reconnection)
         {
-            timeout *= Options.ReconnectionAttempts;
+            var totalTimeout = 1L * timeout * Options.ReconnectionAttempts;
+            if (totalTimeout > int.MaxValue)
+            {
+                timeout = int.MaxValue;
+            }
         }
 
         using var timeoutCts = new CancellationTokenSource(timeout);

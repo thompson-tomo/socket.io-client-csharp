@@ -437,6 +437,17 @@ public class SocketIOTests
             .Should()
             .NotThrowAsync();
     }
+
+    [Fact]
+    public async Task ConnectAsync_AttemptsIsIntMax_NotThrow()
+    {
+        _io.Options.Reconnection = true;
+        _io.Options.ReconnectionAttempts = int.MaxValue;
+
+        var func = async () => await ConnectAsync();
+
+        await func.Should().NotThrowAsync();
+    }
     #endregion
 
     #region Private Methods
