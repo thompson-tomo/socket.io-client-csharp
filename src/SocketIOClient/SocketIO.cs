@@ -103,8 +103,8 @@ public class SocketIO : ISocketIO, IInternalSocketIO
             return;
         }
 
-        _connCompletionSource = new TaskCompletionSource<Exception?>();
-        _sessionCompletionSource = new TaskCompletionSource<bool>();
+        _connCompletionSource = new TaskCompletionSource<Exception?>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _sessionCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var timeout = (int)(Options.ConnectionTimeout.TotalMilliseconds * 1.02);
         if (Options.Reconnection)
         {
@@ -400,7 +400,7 @@ public class SocketIO : ISocketIO, IInternalSocketIO
         var cancellationToken = timeoutCts.Token;
         var session = NewSessionWithCancellationToken(cancellationToken);
         session.Options.Sid = message.Sid;
-        _sessionCompletionSource = new TaskCompletionSource<bool>();
+        _sessionCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         await TryConnectAsync(session, cancellationToken).ConfigureAwait(false);
         _logger.LogDebug("Transport upgraded");
     }
